@@ -1,7 +1,12 @@
 package br.edu.up.buscadefilmes.domain.model
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "filmes")
 data class Filme(
-    var id: Int,
-    var titulo: String,
-    var diretor: String
+    @PrimaryKey(autoGenerate = true) val id: Int,
+    @ColumnInfo("titulo") val titulo: String,
+    @ColumnInfo("diretor") val diretor: String
 )
