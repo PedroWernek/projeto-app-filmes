@@ -8,7 +8,4 @@ import retrofit2.http.PUT
 interface ApiService {
     @GET("filmes")
     suspend fun getFilmes(): Response<List<Filme>>
-
-    @PUT("filme")
-    suspend fun updateFilme(): Response<Filme>
 }

@@ -46,10 +46,8 @@ fun AppNavGraph(navController: NavHostController) {
 
     val rotasComBottomBar = items.map { it.route }
 
-    // 1. Estado para controlar o modo deletar
     var modoDeletar by remember { mutableStateOf(false) }
 
-    // 2. Reseta o modoDeletar se o usuário sair da tela de listagem
     LaunchedEffect(currentRoute) {
         if (currentRoute != BottomNavItem.Listar.route) {
             modoDeletar = false
@@ -77,14 +75,11 @@ fun AppNavGraph(navController: NavHostController) {
                 )
             }
         },
-        // 3. Adiciona o Floating Action Button (FAB)
         floatingActionButton = {
-            // Só mostra o FAB na tela de Listar
             if (currentRoute == BottomNavItem.Listar.route) {
                 FloatingActionButton(
-                    onClick = { modoDeletar = !modoDeletar } // Alterna o modo
+                    onClick = { modoDeletar = !modoDeletar }
                 ) {
-                    // Muda o ícone baseado no modo
                     val icon = if (modoDeletar) Icons.Filled.Close else Icons.Filled.Delete
                     val contentDescription = if (modoDeletar) "Sair do modo deletar" else "Ativar modo deletar"
                     Icon(icon, contentDescription = contentDescription)

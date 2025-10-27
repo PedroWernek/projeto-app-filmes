@@ -13,7 +13,6 @@ import br.edu.up.buscadefilmes.R
 
 @Composable
 fun HomeScreen() {
-    // SEM Scaffold, SEM TopAppBar
     Column(
         modifier = Modifier
             .fillMaxSize()

@@ -28,7 +28,7 @@ fun FilmeItem(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable { onEditClick() }, // Torna o card clicável para edição
+            .clickable { onEditClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
@@ -37,7 +37,6 @@ fun FilmeItem(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Coluna para Título e Diretor
             Column(
                 modifier = Modifier.weight(1f)
             ) {
@@ -51,7 +50,6 @@ fun FilmeItem(
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                // Mostra a nota e o comentário
                 Text(
                     text = "Nota: ${filme.nota}",
                     style = MaterialTheme.typography.bodySmall

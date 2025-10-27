@@ -66,7 +66,6 @@ class FilmeViewModel(application: Application): AndroidViewModel(application) {
             val filmeOriginal = withContext(Dispatchers.IO) {
                 filmeDao.getFilmeById(id)
             }
-            // Atualiza o copy() para incluir os novos campos
             val filmeAtualizado = filmeOriginal.copy(
                 titulo = titulo,
                 diretor = diretor,
@@ -86,7 +85,6 @@ class FilmeViewModel(application: Application): AndroidViewModel(application) {
                 return@launch
             }
 
-            // Correção A: Mover para thread de IO
             val filmeParaExcluir = withContext(Dispatchers.IO) {
                 filmeDao.getFilmeById(id)
             }
@@ -97,10 +95,8 @@ class FilmeViewModel(application: Application): AndroidViewModel(application) {
     }
 
     fun fetchFilmesFromApi() {
-        // Garante que a verificação e a chamada de rede ocorram em segundo plano
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                // CORREÇÃO: A verificação do banco de dados está DENTRO da corrotina
                 val userCount = filmeDao.getAllFilmes().firstOrNull()?.size ?: 0
                 if (userCount > 0) {
                     Log.d("FilmeViewModel", "Banco de dados já populado. Não buscando da API.")
@@ -120,7 +116,6 @@ class FilmeViewModel(application: Application): AndroidViewModel(application) {
                     Log.e("FilmeViewModel", "Erro na resposta da API: ${response.message()}")
                 }
             } catch (e: Exception) {
-                // Log genérico para qualquer tipo de erro
                 Log.e("FilmeViewModel", "Ocorreu um erro ao buscar dados da API.", e)
             }
         }

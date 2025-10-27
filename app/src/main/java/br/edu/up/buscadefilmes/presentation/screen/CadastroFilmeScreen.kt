@@ -20,7 +20,6 @@ fun CadastroFilmeScreen(filmeViewModel: FilmeViewModel) {
     var comentario by remember { mutableStateOf("") }
     var nota by remember { mutableFloatStateOf(1.0F) }
 
-    // SEM Scaffold, SEM TopAppBar
     Column(
         modifier = Modifier
             .fillMaxSize()

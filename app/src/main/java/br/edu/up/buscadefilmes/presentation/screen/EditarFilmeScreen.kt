@@ -32,7 +32,6 @@ fun EditarFilmeScreen(
         }
     }
 
-    // SEM Scaffold, SEM TopAppBar
     if (filmeState == null) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
