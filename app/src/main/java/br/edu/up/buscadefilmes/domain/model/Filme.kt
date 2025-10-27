@@ -8,5 +8,7 @@ import androidx.room.PrimaryKey
 data class Filme(
     @PrimaryKey(autoGenerate = true) val id: Int,
     @ColumnInfo("titulo") val titulo: String,
-    @ColumnInfo("diretor") val diretor: String
+    @ColumnInfo("diretor") val diretor: String,
+    @ColumnInfo("comentário") val comentario: String,
+    @ColumnInfo("nota") val nota: Float
 )

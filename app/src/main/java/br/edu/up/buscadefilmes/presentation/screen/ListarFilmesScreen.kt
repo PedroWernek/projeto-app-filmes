@@ -17,7 +17,7 @@ import br.edu.up.buscadefilmes.presentation.viewModel.FilmeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListarFilmesScreen(navController: NavController, filmeViewModel: FilmeViewModel) {
+fun ListarFilmesScreen(filmeViewModel: FilmeViewModel) {
 
     val filmes by filmeViewModel.getAllFilmes().collectAsState(initial = emptyList())
 
@@ -25,11 +25,6 @@ fun ListarFilmesScreen(navController: NavController, filmeViewModel: FilmeViewMo
         topBar = {
             TopAppBar(
                 title = { Text("Lista de Filmes") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
-                    }
-                }
             )
         }
     ) { innerPadding ->

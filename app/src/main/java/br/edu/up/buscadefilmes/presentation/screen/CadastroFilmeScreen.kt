@@ -1,28 +1,30 @@
 package br.edu.up.buscadefilmes.presentation.screen
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import br.edu.up.buscadefilmes.presentation.components.StarRatingBar
 import br.edu.up.buscadefilmes.presentation.viewModel.FilmeViewModel
-import kotlin.text.isNotBlank
+import br.edu.up.buscadefilmes.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CadastroFilmeScreen(navController: NavController, filmeViewModel: FilmeViewModel) {
+fun CadastroFilmeScreen(filmeViewModel: FilmeViewModel) {
     var titulo by remember { mutableStateOf("") }
     var diretor by remember { mutableStateOf("") }
+    var comentario by remember { mutableStateOf("") }
+    var nota by remember { mutableFloatStateOf(1.0F) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Cadastrar Usuário") }
+                title = { Text("Cadastrar Filme") }
             )
         }
     ) { innerPadding ->
@@ -31,28 +33,52 @@ fun CadastroFilmeScreen(navController: NavController, filmeViewModel: FilmeViewM
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(16.dp),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TextField(
+            Image(
+                painter = painterResource(id = R.drawable.tela_inicial),
+                contentDescription = "Logo do App de Filmes",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
                 value = titulo,
                 onValueChange = { titulo = it },
                 label = { Text("Titulo") },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
-            TextField(
+            OutlinedTextField(
                 value = diretor,
                 onValueChange = { diretor = it },
                 label = { Text("Diretor") },
                 modifier = Modifier.fillMaxWidth()
             )
             Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = comentario,
+                onValueChange = { comentario = it },
+                label = { Text("Comentario") },
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(text = "Nota")
+                StarRatingBar(maxStars = 5, rating = nota, onRatingChanged = { nota = it })
+            }
+            Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
                     if (titulo.isNotBlank() && diretor.isNotBlank()) {
-                        filmeViewModel.salvarFilme(titulo, diretor)
+                        filmeViewModel.salvarFilme(titulo, diretor, comentario, nota)
                         titulo = ""
                         diretor = ""
+                        comentario = ""
+                        nota = 0f
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -60,15 +86,6 @@ fun CadastroFilmeScreen(navController: NavController, filmeViewModel: FilmeViewM
 
             ) {
                 Text("Cadastrar")
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = {
-                    navController.navigate("listar")
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Lista de usuários")
             }
         }
     }

@@ -36,7 +36,7 @@ class FilmeViewModel(application: Application): AndroidViewModel(application) {
         return filmeDao.getFilmesByDiretor(diretor)
     }
 
-    fun salvarFilme(titulo: String, diretor: String){
+    fun salvarFilme(titulo: String, diretor: String, comentario: String, nota: Float){
         viewModelScope.launch {
             if (Validacao.hasCamposEmBranco(titulo, diretor)) {
                 Log.w("FilmeViewModel", "Preencha todos os campos!")
@@ -46,7 +46,9 @@ class FilmeViewModel(application: Application): AndroidViewModel(application) {
             val filme = Filme(
                 Validacao.getId(),
                 titulo,
-                diretor
+                diretor,
+                comentario,
+                nota
             )
 
             filmeDao.insert(filme)
