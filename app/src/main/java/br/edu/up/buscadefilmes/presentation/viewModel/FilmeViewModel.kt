@@ -38,17 +38,17 @@ class FilmeViewModel(application: Application): AndroidViewModel(application) {
 
     fun salvarFilme(titulo: String, diretor: String, comentario: String, nota: Float){
         viewModelScope.launch {
-            if (Validacao.hasCamposEmBranco(titulo, diretor)) {
+            if (Validacao.hasCamposEmBranco(titulo, diretor, comentario)) {
                 Log.w("FilmeViewModel", "Preencha todos os campos!")
                 return@launch
             }
 
             val filme = Filme(
-                Validacao.getId(),
-                titulo,
-                diretor,
-                comentario,
-                nota
+                titulo = titulo,
+                diretor = diretor,
+                comentario = comentario,
+                nota = nota,
+                id = 0
             )
 
             filmeDao.insert(filme)
@@ -56,19 +56,23 @@ class FilmeViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    fun atualizarFilme(id: Int, titulo: String, diretor: String){
+    fun atualizarFilme(id: Int, titulo: String, diretor: String, comentario: String, nota: Float){
         viewModelScope.launch {
-            if (Validacao.hasCamposEmBranco(titulo, diretor)) {
+            if (Validacao.hasCamposEmBranco(titulo, diretor,comentario)) {
                 Log.w(tag,"Ao editar, preencha todos os dados")
                 return@launch
             }
 
-            // Correção A: Mover para thread de IO
-            // Correção B: Armazenar o resultado do .copy()
             val filmeOriginal = withContext(Dispatchers.IO) {
                 filmeDao.getFilmeById(id)
             }
-            val filmeAtualizado = filmeOriginal.copy(titulo = titulo, diretor = diretor)
+            // Atualiza o copy() para incluir os novos campos
+            val filmeAtualizado = filmeOriginal.copy(
+                titulo = titulo,
+                diretor = diretor,
+                comentario = comentario,
+                nota = nota
+            )
             filmeDao.update(filmeAtualizado)
 
             Log.d(tag, "Filme atualizado!")
@@ -120,5 +124,8 @@ class FilmeViewModel(application: Application): AndroidViewModel(application) {
                 Log.e("FilmeViewModel", "Ocorreu um erro ao buscar dados da API.", e)
             }
         }
+    }
+    fun getFilmeByIdFlow(id: Int): Flow<Filme?> {
+        return filmeDao.getFilmeByIdFlow(id)
     }
 }

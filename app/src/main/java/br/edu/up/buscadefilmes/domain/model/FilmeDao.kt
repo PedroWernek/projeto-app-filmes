@@ -24,5 +24,6 @@ interface FilmeDao {
     fun getFilmesByDiretor(nomeDiretor: String): Flow<List<Filme>>
     @Query("SELECT * FROM filmes WHERE titulo LIKE :tituloFilme")
     fun getFilmesByTitulo(tituloFilme: String): Flow<List<Filme>>
-
+    @Query("SELECT * FROM filmes WHERE id = :idFilme")
+    fun getFilmeByIdFlow(idFilme: Int): Flow<Filme?>
 }

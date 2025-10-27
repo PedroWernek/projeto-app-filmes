@@ -8,17 +8,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import br.edu.up.buscadefilmes.presentation.components.bottom_nav.BottomNavItem
 import br.edu.up.buscadefilmes.presentation.components.bottom_nav.BottomNavigationBar
 import br.edu.up.buscadefilmes.presentation.screen.CadastroFilmeScreen
+import br.edu.up.buscadefilmes.presentation.screen.EditarFilmeScreen // 1. Importar nova tela
 import br.edu.up.buscadefilmes.presentation.screen.HomeScreen
 import br.edu.up.buscadefilmes.presentation.screen.ListarFilmesScreen
 import br.edu.up.buscadefilmes.presentation.viewModel.FilmeViewModel
-import kotlin.collections.listOf
 
 @Composable
 fun AppNavGraph(modifier: Modifier, navController: NavHostController) {
@@ -40,8 +41,14 @@ fun AppNavGraph(modifier: Modifier, navController: NavHostController) {
                 selectedRoute = currentRoute,
                 onItemSelected = { item ->
                     navController.navigate(item.route) {
-                        popUpTo(items.first().route) { inclusive = false }
+                        // PopUp to the start destination to avoid building a large stack
+                        navController.graph.startDestinationRoute?.let { route ->
+                            popUpTo(route) {
+                                saveState = true
+                            }
+                        }
                         launchSingleTop = true
+                        restoreState = true
                     }
                 })
         }
@@ -65,8 +72,24 @@ fun AppNavGraph(modifier: Modifier, navController: NavHostController) {
             }
             composable(BottomNavItem.Listar.route) {
                 ListarFilmesScreen(
+                    navController = navController, // 2. Passar o NavController
                     filmeViewModel = filmeViewModel
                 )
+            }
+
+            // 3. Adicionar a nova rota de Edição
+            composable(
+                route = "editar/{filmeId}",
+                arguments = listOf(navArgument("filmeId") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val filmeId = backStackEntry.arguments?.getInt("filmeId")
+                if (filmeId != null) {
+                    EditarFilmeScreen(
+                        navController = navController,
+                        filmeViewModel = filmeViewModel,
+                        filmeId = filmeId
+                    )
+                }
             }
         }
     }

@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import br.edu.up.buscadefilmes.presentation.components.StarRatingBar
 import br.edu.up.buscadefilmes.presentation.viewModel.FilmeViewModel
 import br.edu.up.buscadefilmes.R
+import br.edu.up.buscadefilmes.domain.Validacao
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,7 +83,7 @@ fun CadastroFilmeScreen(filmeViewModel: FilmeViewModel) {
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = titulo.isNotBlank() && diretor.isNotBlank()
+                enabled = Validacao.hasCamposEmBranco(titulo,diretor,comentario)
 
             ) {
                 Text("Cadastrar")
