@@ -1,10 +1,19 @@
 package br.edu.up.buscadefilmes.presentation.navigation
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -16,13 +25,14 @@ import androidx.navigation.navArgument
 import br.edu.up.buscadefilmes.presentation.components.bottom_nav.BottomNavItem
 import br.edu.up.buscadefilmes.presentation.components.bottom_nav.BottomNavigationBar
 import br.edu.up.buscadefilmes.presentation.screen.CadastroFilmeScreen
-import br.edu.up.buscadefilmes.presentation.screen.EditarFilmeScreen // 1. Importar nova tela
+import br.edu.up.buscadefilmes.presentation.screen.EditarFilmeScreen
 import br.edu.up.buscadefilmes.presentation.screen.HomeScreen
 import br.edu.up.buscadefilmes.presentation.screen.ListarFilmesScreen
 import br.edu.up.buscadefilmes.presentation.viewModel.FilmeViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppNavGraph(modifier: Modifier, navController: NavHostController) {
+fun AppNavGraph(navController: NavHostController) {
     val filmeViewModel: FilmeViewModel = viewModel()
     val items = remember {
         listOf(
@@ -31,26 +41,55 @@ fun AppNavGraph(modifier: Modifier, navController: NavHostController) {
             BottomNavItem.Listar,
         )
     }
-    val navBackStackEntry = navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry.value?.destination?.route ?: items[1].route
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    val rotasComBottomBar = items.map { it.route }
+
+    // 1. Estado para controlar o modo deletar
+    var modoDeletar by remember { mutableStateOf(false) }
+
+    // 2. Reseta o modoDeletar se o usuário sair da tela de listagem
+    LaunchedEffect(currentRoute) {
+        if (currentRoute != BottomNavItem.Listar.route) {
+            modoDeletar = false
+        }
+    }
 
     Scaffold(
+        topBar = {
+            DynamicTopBar(currentRoute = currentRoute, navController = navController)
+        },
         bottomBar = {
-            BottomNavigationBar(
-                items = items,
-                selectedRoute = currentRoute,
-                onItemSelected = { item ->
-                    navController.navigate(item.route) {
-                        // PopUp to the start destination to avoid building a large stack
-                        navController.graph.startDestinationRoute?.let { route ->
-                            popUpTo(route) {
-                                saveState = true
+            if (currentRoute in rotasComBottomBar) {
+                BottomNavigationBar(
+                    items = items,
+                    selectedRoute = currentRoute,
+                    onItemSelected = { item ->
+                        navController.navigate(item.route) {
+                            navController.graph.startDestinationRoute?.let { route ->
+                                popUpTo(route) { saveState = true }
                             }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
-                })
+                )
+            }
+        },
+        // 3. Adiciona o Floating Action Button (FAB)
+        floatingActionButton = {
+            // Só mostra o FAB na tela de Listar
+            if (currentRoute == BottomNavItem.Listar.route) {
+                FloatingActionButton(
+                    onClick = { modoDeletar = !modoDeletar } // Alterna o modo
+                ) {
+                    // Muda o ícone baseado no modo
+                    val icon = if (modoDeletar) Icons.Filled.Close else Icons.Filled.Delete
+                    val contentDescription = if (modoDeletar) "Sair do modo deletar" else "Ativar modo deletar"
+                    Icon(icon, contentDescription = contentDescription)
+                }
+            }
         }
     ) { paddingValues ->
         NavHost(
@@ -67,17 +106,15 @@ fun AppNavGraph(modifier: Modifier, navController: NavHostController) {
                 )
             }
             composable(BottomNavItem.Home.route) {
-                HomeScreen(
-                )
+                HomeScreen()
             }
             composable(BottomNavItem.Listar.route) {
                 ListarFilmesScreen(
-                    navController = navController, // 2. Passar o NavController
-                    filmeViewModel = filmeViewModel
+                    navController = navController,
+                    filmeViewModel = filmeViewModel,
+                    modoDeletar = modoDeletar
                 )
             }
-
-            // 3. Adicionar a nova rota de Edição
             composable(
                 route = "editar/{filmeId}",
                 arguments = listOf(navArgument("filmeId") { type = NavType.IntType })
@@ -94,3 +131,4 @@ fun AppNavGraph(modifier: Modifier, navController: NavHostController) {
         }
     }
 }
+

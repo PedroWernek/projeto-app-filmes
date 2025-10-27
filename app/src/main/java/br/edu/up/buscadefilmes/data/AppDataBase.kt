@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import br.edu.up.buscadefilmes.domain.model.Filme
 import br.edu.up.buscadefilmes.domain.model.FilmeDao
 
-@Database(entities = [Filme::class], version = 2, exportSchema = false)
+@Database(entities = [Filme::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun filmeDao(): FilmeDao
 

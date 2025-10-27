@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 @Composable
 fun BottomNavigationBar(
     items: List<BottomNavItem>,
-    selectedRoute: String,
+    selectedRoute: String?,
     onItemSelected: (BottomNavItem) -> Unit
 ) {
     NavigationBar {

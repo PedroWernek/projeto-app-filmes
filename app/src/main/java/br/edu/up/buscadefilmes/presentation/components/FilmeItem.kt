@@ -21,7 +21,8 @@ import br.edu.up.buscadefilmes.domain.model.Filme
 fun FilmeItem(
     filme: Filme,
     onEditClick: () -> Unit,
-    onDeleteClick: () -> Unit
+    onDeleteClick: () -> Unit,
+    modoDeletar: Boolean
 ) {
     Card(
         modifier = Modifier
@@ -64,13 +65,14 @@ fun FilmeItem(
                 }
             }
 
-            // Botão de Excluir
-            IconButton(onClick = onDeleteClick) {
-                Icon(
-                    imageVector = Icons.Filled.Delete,
-                    contentDescription = "Excluir Filme",
-                    tint = MaterialTheme.colorScheme.error
-                )
+            if(modoDeletar) {
+                IconButton(onClick = onDeleteClick) {
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = "Excluir Filme",
+                        tint = MaterialTheme.colorScheme.error
+                    )
+                }
             }
         }
     }
