@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "br.edu.up.cadastrode20clientes"
-    compileSdk = 36 // CORRIGIDO: Atualizado para a versão exigida pelas bibliotecas
+    namespace = "br.edu.up.buscadefilmes"
+    compileSdk = 36
 
     defaultConfig {
-        applicationId = "br.edu.up.cadastrode20clientes"
+        applicationId = "br.edu.up.buscadefilmes"
         minSdk = 24
         targetSdk = 36 // CORRIGIDO: Atualizado para a versão exigida pelas bibliotecas
         versionCode = 1

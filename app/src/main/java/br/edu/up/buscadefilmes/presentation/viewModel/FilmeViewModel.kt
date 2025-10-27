@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FilmeViewModel(application: Application): AndroidViewModel(application) {
     private val filmeDao: FilmeDao
@@ -59,8 +60,13 @@ class FilmeViewModel(application: Application): AndroidViewModel(application) {
                 Log.w(tag,"Ao editar, preencha todos os dados")
                 return@launch
             }
-            val filmeAtualizado = filmeDao.getFilmeById(id)
-            filmeAtualizado.copy(titulo=titulo, diretor = diretor)
+
+            // Correção A: Mover para thread de IO
+            // Correção B: Armazenar o resultado do .copy()
+            val filmeOriginal = withContext(Dispatchers.IO) {
+                filmeDao.getFilmeById(id)
+            }
+            val filmeAtualizado = filmeOriginal.copy(titulo = titulo, diretor = diretor)
             filmeDao.update(filmeAtualizado)
 
             Log.d(tag, "Filme atualizado!")
@@ -74,7 +80,11 @@ class FilmeViewModel(application: Application): AndroidViewModel(application) {
                 return@launch
             }
 
-            filmeDao.delete(filmeDao.getFilmeById(id))
+            // Correção A: Mover para thread de IO
+            val filmeParaExcluir = withContext(Dispatchers.IO) {
+                filmeDao.getFilmeById(id)
+            }
+            filmeDao.delete(filmeParaExcluir)
 
             Log.d(tag, "Filme excluido com sucesso!")
         }
